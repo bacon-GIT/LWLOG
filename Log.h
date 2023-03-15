@@ -5,6 +5,8 @@
 #include <fstream>
 #include <chrono>
 #include <ctime> 
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 
@@ -21,38 +23,48 @@ namespace Log {
 
         public:
             Logger(std::string file) {
+                if(fileExists(file)) {
                 logfile.open(file, std::ios_base::app);
+                } else {
+                    std::cerr << "[-] Log file does not exist. Attempting to create it...";
+                    std::ofstream {file};
+                    logfile.open(file, std::ios_base::app);
+                }
             }
-                
+
             ~Logger() {
                 logfile.close();
             }
 
             void DEBUG(std::string msg) {
-                log_prefix = "[DEBUG] ";
-                log = log_prefix + msg + " " + log_suffix;
-                WriteFile(log);
+                log_prefix = "[DEBUG] | ";
+                log = log_prefix + msg + " | " + log_suffix;
+                writeFile(log);
             }
 
             void INFO(std::string msg) {
-                log_prefix = "[INFO] ";
-                log = log_prefix + msg + " " + log_suffix;
-                WriteFile(log);
+                log_prefix = "[INFO] | ";
+                log = log_prefix + msg + " | " + log_suffix;
+                writeFile(log);
             }
             void WARN(std::string msg) { 
-                log_prefix = "[WARN] ";
-                log = log_prefix + msg + " " + log_suffix;
-                WriteFile(log);
+                log_prefix = "[WARN] | ";
+                log = log_prefix + msg + " | " + log_suffix;
+                writeFile(log);
             }
             void ERROR(std::string msg) {
-                log_prefix = "[ERROR] ";
-                log = log_prefix + msg + " " + log_suffix;
-                WriteFile(log);
+                log_prefix = "[ERROR] | ";
+                log = log_prefix + msg + " | " + log_suffix;
+                writeFile(log);
             }
 
         private:
-            void WriteFile(std::string msg) {
+            void writeFile(std::string msg) {
                 logfile << msg;
+            }
+            inline bool fileExists (const std::string& name) {
+                struct stat buffer;   
+                return (stat (name.c_str(), &buffer) == 0); 
             }
             std::string msg;
     };
