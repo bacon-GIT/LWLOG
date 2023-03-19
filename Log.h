@@ -16,13 +16,16 @@ namespace Log {
         std::string log;
         std::string log_prefix;
 
+        bool out_flag;
+
         // Get Current Time
         time_t now = time(0);
         char* dt = ctime(&now);
         std::string log_suffix = dt;
 
         public:
-            Logger(std::string file) {
+            Logger(std::string file, bool out_flag_param) {
+                out_flag = out_flag_param;
                 if(fileExists(file)) {
                 logfile.open(file, std::ios_base::app);
                 } else {
@@ -31,36 +34,31 @@ namespace Log {
                     logfile.open(file, std::ios_base::app);
                 }
             }
-
-            ~Logger() {
-                logfile.close();
+            std::string stringBuilder(std::string msg, std::string log_prefix) {
+                return log_prefix + msg + " " + log_suffix;
             }
-
             void DEBUG(std::string msg) {
-                log_prefix = "[DEBUG] | ";
-                log = log_prefix + msg + " | " + log_suffix;
-                writeFile(log);
+                writeFile(stringBuilder(msg, "[DEBUG] "));
             }
-
             void INFO(std::string msg) {
-                log_prefix = "[INFO] | ";
-                log = log_prefix + msg + " | " + log_suffix;
-                writeFile(log);
+                writeFile(stringBuilder(msg, "[INFO] "));
             }
             void WARN(std::string msg) { 
-                log_prefix = "[WARN] | ";
-                log = log_prefix + msg + " | " + log_suffix;
-                writeFile(log);
+                writeFile(stringBuilder(msg, "[WARN] "));
             }
             void ERROR(std::string msg) {
-                log_prefix = "[ERROR] | ";
-                log = log_prefix + msg + " | " + log_suffix;
-                writeFile(log);
+                writeFile(stringBuilder(msg, "[ERROR] "));
+            }
+            void CloseLogger() {
+                logfile.close();
             }
 
         private:
             void writeFile(std::string msg) {
                 logfile << msg;
+                if (out_flag) {
+                    std::cout << msg;
+                }
             }
             inline bool fileExists (const std::string& name) {
                 struct stat buffer;   
