@@ -3,7 +3,6 @@
 
 Log::Logger mylogger("TestName", true);
 
-
 int main() {
     mylogger.DEBUG("Test Debug");
     mylogger.INFO("Test Info");
