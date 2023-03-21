@@ -9,6 +9,23 @@
 #include <unistd.h>
 #endif
 
+/*
+Author:     bacon-GIT @ Github
+Version:    1.2
+Info:       A header file for quick logging capabilities
+
+            #include <Log.h>
+            Logger(std::string file, bool out_flag_param, int log_level_param)
+            
+            Log Levels:
+                0   -   NONE
+                1   -   DEBUG
+                2   -   INFO
+                3   -   WARM
+                4   -   ERROR
+                5   -   CRITICAL
+*/
+
 
 namespace Log {
     class Logger {
@@ -17,6 +34,7 @@ namespace Log {
         std::string log_prefix;
 
         bool out_flag;
+        int log_level;
 
         // Get Current Time
         time_t now = time(0);
@@ -24,8 +42,10 @@ namespace Log {
         std::string log_suffix = dt;
 
         public:
-            Logger(std::string file, bool out_flag_param) {
+            Logger(std::string file, bool out_flag_param, int log_level_param) {
+                log_level = log_level_param;
                 out_flag = out_flag_param;
+                
                 if(fileExists(file)) {
                 logfile.open(file, std::ios_base::app);
                 } else {
@@ -38,16 +58,29 @@ namespace Log {
                 return log_prefix + msg + " " + log_suffix;
             }
             void DEBUG(std::string msg) {
-                writeFile(stringBuilder(msg, "[DEBUG] "));
+                if (log_level > 0) {
+                    writeFile(stringBuilder(msg, "[DEBUG] "));
+                }
             }
             void INFO(std::string msg) {
-                writeFile(stringBuilder(msg, "[INFO] "));
+                if (log_level > 1) {
+                    writeFile(stringBuilder(msg, "[INFO] "));
+                }
             }
             void WARN(std::string msg) { 
-                writeFile(stringBuilder(msg, "[WARN] "));
+                if (log_level > 2) {
+                    writeFile(stringBuilder(msg, "[WARN] "));
+                }
             }
             void ERROR(std::string msg) {
-                writeFile(stringBuilder(msg, "[ERROR] "));
+                if (log_level > 3) {
+                    writeFile(stringBuilder(msg, "[ERROR] "));
+                }
+            }
+             void CRITICAL(std::string msg) {
+                if (log_level > 4) {
+                    writeFile(stringBuilder(msg, "[CRITICAL] "));
+                }
             }
             void CloseLogger() {
                 logfile.close();
