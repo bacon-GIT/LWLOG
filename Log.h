@@ -7,11 +7,10 @@
 #include <ctime> 
 #include <sys/stat.h>
 #include <unistd.h>
-#endif
 
 /*
 Author:     bacon-GIT @ Github
-Version:    1.2
+Version:    1.3
 Info:       A header file for quick logging capabilities
 
             #include <Log.h>
@@ -82,6 +81,32 @@ namespace Log {
                     writeFile(stringBuilder(msg, "[CRITICAL] "));
                 }
             }
+            // Integer Overloads
+            void DEBUG(int msg) {
+                if (log_level > 0) {
+                    writeFile(stringBuilder(std::to_string(msg), "[DEBUG] "));
+                }
+            }
+            void INFO(int msg) {
+                if (log_level > 1) {
+                    writeFile(stringBuilder(std::to_string(msg), "[INFO] "));
+                }
+            }
+            void WARN(int msg) { 
+                if (log_level > 2) {
+                    writeFile(stringBuilder(std::to_string(msg), "[WARN] "));
+                }
+            }
+            void ERROR(int msg) {
+                if (log_level > 3) {
+                    writeFile(stringBuilder(std::to_string(msg), "[ERROR] "));
+                }
+            }
+             void CRITICAL(int msg) {
+                if (log_level > 4) {
+                    writeFile(stringBuilder(std::to_string(msg), "[CRITICAL] "));
+                }
+            }
             void CloseLogger() {
                 logfile.close();
             }
@@ -98,5 +123,8 @@ namespace Log {
                 return (stat (name.c_str(), &buffer) == 0); 
             }
             std::string msg;
+                // Declare the global instance
     };
+    extern Logger gameLogger;
 }
+#endif
